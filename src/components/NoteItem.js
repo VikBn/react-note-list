@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default ({props}) => {
-    console.log(props);
+    console.log('props',props);
     return (
         <div>
             <span>{props.id}</span>
