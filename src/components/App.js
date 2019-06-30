@@ -1,13 +1,14 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import NotesList from './NotesList';
 import uuid from 'uuid';
-import axios from 'axios';
 import Modal from './Modal';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton'
 import CloseIcon from '@material-ui/icons/Close'
 import Snackbar from '@material-ui/core/Snackbar';
 import Loader from '../loader/Loader'
+import Cookies from "js-cookie"
+import { serviceApi } from "../services/api"
 
 class App extends Component {
 
@@ -21,10 +22,62 @@ class App extends Component {
         isModal: false,
         snackbarOpen: false,
         snackBarMsg: '',
-        isLoader: true
+        isLoader: true,
+        hasError: null
     };
 
-    snackBarClose = () => {
+    componentDidMount() {
+        this.getInitialData()
+    }
+
+    updateError = value => {
+        this.setState({
+            hasError: value
+        })
+    };
+
+    getInitialData = async () => {
+        try {
+            await this.getToken();
+            await this.getNotes()
+        } catch (error) {
+            this.updateError(true)
+        }
+    };
+
+    getToken = async () => {
+        try {
+            if (Cookies.get("application_token")) return;
+            const res = await serviceApi.call({
+                url: '/tokens',
+                method: 'POST',
+                withToken: false,
+                data: JSON.stringify({
+                    userName: "VikBn"
+                })
+            });
+            serviceApi.setToken(res.data.token)
+        } catch (error) {
+            throw error
+        }
+
+    };
+
+    getNotes = async () => {
+        try {
+            const res = await serviceApi.call({
+                url: '/notes',
+            });
+            this.setState({
+                notes: res.data.notes,
+                isLoader: false
+            })
+        } catch (error) {
+            throw error
+        }
+    };
+
+    snackBarClose = e => {
         this.setState({
             snackbarOpen: false
         })
@@ -44,46 +97,44 @@ class App extends Component {
         }
     };
 
-    handleSubmit = e => {
-        e.preventDefault();
+    handleSubmit = async (e) => {
+        try {
+            e.preventDefault();
 
-        const newNote = {
-            title: this.state.title,
-            content: this.state.content,
-            id: uuid()
-        };
-
-        axios({
-            method: 'post',
-            mode: 'cors',
-            url: 'notes',
-            headers: {Authorization: "Bearer ca7b29ljd8piu7iq4g8k0fiwyuwiyrtuwyot"},
-            data: newNote
-        })
-            .then(() => {
-                    this.setState({
-                        title: '',
-                        content: '',
-                        isModal: false,
-                        snackbarOpen: true,
-                        snackBarMsg: 'test'
-                    }, () => console.log(this.state.notes))
-                }
-            )
-            .then(() => {
-                this.getNotes();
-            })
-            .catch(error => console.log(error))
+            const newNote = {
+                title: this.state.title,
+                content: this.state.content,
+                id: uuid()
+            };
+            await serviceApi.call({
+                method: 'POST',
+                url: '/notes',
+                data: newNote
+            });
+            this.setState({
+                title: '',
+                content: '',
+                isModal: false,
+                snackbarOpen: true,
+                snackBarMsg: 'test'
+            });
+            await this.getNotes()
+        } catch (error) {
+            console.log('submit error', error)
+        }
     };
 
-    handleDelete = id => {
-        fetch(`notes/${id}`, {
-            method: 'DELETE',
-            mode: 'cors',
-            headers: {Authorization: "Bearer ca7b29ljd8piu7iq4g8k0fiwyuwiyrtuwyot"}
-        })
-            .then(() => this.getNotes())
-            .catch(error => console.log('delete error', error))
+    handleDelete = async (id) => {
+        try {
+            await serviceApi.call({
+                method: 'DELETE',
+                url: `notes/${id}`
+
+            });
+            await this.getNotes()
+        } catch (error) {
+            console.log('delete error', error)
+        }
     };
 
     handleEdit = id => {
@@ -98,31 +149,29 @@ class App extends Component {
         })
     };
 
-    updateNote = () => {
-        const updatedNote = {
-            title: this.state.title,
-            content: this.state.content,
-            id: this.state.id
-        };
+    updateNote = async () => {
+        try {
+            const updatedNote = {
+                title: this.state.title,
+                content: this.state.content,
+                id: this.state.id
+            };
+            await serviceApi.call({
+                method: "PATCH",
+                url: `notes/${this.state.id}`,
+                data: updatedNote
+            });
 
-        axios(`notes/${this.state.id}`, {
-            mode: 'cors',
-            method: "PATCH",
-            headers: {Authorization: "Bearer ca7b29ljd8piu7iq4g8k0fiwyuwiyrtuwyot"},
-            data: updatedNote
-        })
-            .then(() => {
-                    this.setState({
-                        title: '',
-                        content: '',
-                        isModal: false,
-                        editNote: false
-                    })
-                }
-            )
-            .then(() => {
-                this.getNotes();
-            })
+            this.setState({
+                title: '',
+                content: '',
+                isModal: false,
+                editNote: false
+            });
+            await this.getNotes();
+        } catch (error) {
+            console.log('patch error', error)
+        }
     };
 
     openModal = () => {
@@ -144,77 +193,22 @@ class App extends Component {
         alert('stop');
     };
 
-    getNotes = () => {
-        fetch('notes', {
-            method: 'GET',
-            mode: 'cors',
-            headers: {Authorization: "Bearer ca7b29ljd8piu7iq4g8k0fiwyuwiyrtuwyot"}
-        })
-            .then(res => res.json())
-            .then(data => {
-                console.log(data);
-                this.setState({
-                    notes: data.notes,
-                    isLoader: false
-                })
-            }).catch(error => console.log('get error', error))
 
-        // axios(`notes`, {
-        //     mode: 'cors',
-        //     method: "GET",
-        //     headers: {
-        //         Authorization: `Bearer 0unf3pj33xt4d9bf2vb0xahwyuwoooyioqqy`
-        //     }})
-        //     .then(res => res)
-        //     .then(data => {
-        //         console.log(data);
-        //         this.setState({
-        //             notes: data.notes,
-        //             isLoader: false
-        //         })
-        //     }).catch(error => console.log('get error',error))
-    };
 
-    componentDidMount() {
-        // axios({
-        //     method: 'post',
-        //     mode: 'cors',
-        //     url: 'tokens',
-        //     headers: {
-        //         "content-type": "application/json"
-        //     },
-        //     data: JSON.stringify({
-        //         userName: "VikBn"
-        //     })
-        // })
-        //     .then(res => {
-        //         console.log(res)
-        //     })
-        //     .catch(error => console.log('token error', error));
-
-        fetch('tokens', {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-                "content-type": "application/json"
-            },
-            body: JSON.stringify({
-                userName: "VikBn"
-            })
-        })
-            .then(res => res.json())
-            .then(data => console.log(data));
-
-        this.getNotes();
-
+    reloadPage = () => {
+        this.updateError(null)
+        this.getInitialData()
     }
 
     render() {
+        if (this.state.hasError) {
+            return <div><button type="button" onClick={this.reloadPage}>Reload page</button></div>
+        }
         return (
             <div className="App">
                 {
                     this.state.isLoader
-                        ? <Loader/>
+                        ? <Loader />
                         : <>
                             <Snackbar
                                 anchorOrigin={{
@@ -235,7 +229,7 @@ class App extends Component {
                                         color="inherit"
                                         onClick={this.snackBarClose}
                                     >
-                                        <CloseIcon/>
+                                        <CloseIcon />
                                     </IconButton>,
                                 ]}
                             />
