@@ -3,7 +3,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import styled from 'styled-components';
 
-export default ({title, content, handleSubmit, handleChange, updateNote, editCancel, closeModal, editNote}) => {
+export default ({ title, content, handleSubmit, handleChange, updateNote, editCancel, closeModal, editNote }) => {
     return (
         <ModalContainer>
             <div id='modal'>
@@ -83,28 +83,28 @@ const ModalContainer = styled.div`
     align-items: center;
     justify-content: center;
 
-.modal_content {
-    border: 1px solid #e2e2e2
-    padding: 24px;
-}
+    .modal_content {
+        border: 1px solid #e2e2e2
+        padding: 24px;
+    }
 
-#modal {
-    background: #ffffff;
-    
-    padding: 24px 24px 46px;
-    position: relative;
-    width: 90%;
-}
+    #modal {
+        background: #ffffff;
+        
+        padding: 24px 24px 46px;
+        position: relative;
+        width: 90%;
+    }
 
-.modal__buttons {
-    margin-top: 24px;
-}
+    .modal__buttons {
+        margin-top: 24px;
+    }
 
-.modal__input {
-    margin: 24px 0;
-}
+    .modal__input {
+        margin: 24px 0;
+    }
 
-.v-align-sub {
-    vertical-align: sub;
-}
+    .v-align-sub {
+        vertical-align: sub;
+    }
 `;

@@ -1,14 +1,10 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import NotesList from './NotesList';
 import uuid from 'uuid';
 import Modal from './Modal';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton'
-import CloseIcon from '@material-ui/icons/Close'
-import Snackbar from '@material-ui/core/Snackbar';
+import SnackBar from './SnackBar';
 import Loader from '../loader/Loader'
-import Cookies from "js-cookie"
-import { serviceApi } from "../services/api"
+import {serviceApi} from "../services/api"
 
 class App extends Component {
 
@@ -19,11 +15,12 @@ class App extends Component {
         title: '',
         content: '',
         editNote: false,
-        isModal: false,
-        snackbarOpen: false,
-        snackBarMsg: '',
         isLoader: true,
-        hasError: null
+        hasError: null,
+        snackBar: {
+            open: false,
+            message: ""
+        }
     };
 
     componentDidMount() {
@@ -47,7 +44,7 @@ class App extends Component {
 
     getToken = async () => {
         try {
-            if (Cookies.get("application_token")) return;
+            if (serviceApi.getToken()) return;
             const res = await serviceApi.call({
                 url: '/tokens',
                 method: 'POST',
@@ -60,7 +57,6 @@ class App extends Component {
         } catch (error) {
             throw error
         }
-
     };
 
     getNotes = async () => {
@@ -77,10 +73,18 @@ class App extends Component {
         }
     };
 
-    snackBarClose = e => {
-        this.setState({
-            snackbarOpen: false
-        })
+    closeSnackBar = () => {
+        this.setState(state => ({
+            ...state,
+            snackBar: {
+                ...state.snackBar,
+                open: false
+            }
+        }))
+    };
+
+    onRevertAction = () => {
+        console.log("revert action")
     };
 
     handleChange = e => {
@@ -111,13 +115,16 @@ class App extends Component {
                 url: '/notes',
                 data: newNote
             });
-            this.setState({
+            this.setState(state => ({
                 title: '',
                 content: '',
                 isModal: false,
-                snackbarOpen: true,
-                snackBarMsg: 'test'
-            });
+                snackBar: {
+                    ...state.snackBar,
+                    open: true,
+                    message: 'Note created success'
+                }
+            }));
             await this.getNotes()
         } catch (error) {
             console.log('submit error', error)
@@ -165,7 +172,6 @@ class App extends Component {
             this.setState({
                 title: '',
                 content: '',
-                isModal: false,
                 editNote: false
             });
             await this.getNotes();
@@ -174,72 +180,36 @@ class App extends Component {
         }
     };
 
-    openModal = () => {
-        this.setState({
-            isModal: true
-        })
-    };
-
-    closeModal = () => {
-        this.setState({
-            isModal: false,
-            editNote: false,
-            title: '',
-            content: ''
-        })
-    };
-
-    snackBarStop = () => {
-        alert('stop');
-    };
-
-
-
     reloadPage = () => {
-        this.updateError(null)
+        this.updateError(null);
         this.getInitialData()
-    }
+    };
 
     render() {
         if (this.state.hasError) {
-            return <div><button type="button" onClick={this.reloadPage}>Reload page</button></div>
+            return <div>
+                <button type="button" onClick={this.reloadPage}>Reload page</button>
+            </div>
         }
         return (
             <div className="App">
                 {
                     this.state.isLoader
-                        ? <Loader />
+                        ? <Loader/>
                         : <>
-                            <Snackbar
-                                anchorOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                }}
-                                open={this.state.snackbarOpen}
-                                autoHideDuration={2000}
-                                onClose={this.snackBarClose}
-                                message={<span id="message-id">{this.state.snackBarMsg}</span>}
-                                action={[
-                                    <Button key="undo" color="secondary" size="small" onClick={this.snackBarStop}>
-                                        UNDO
-                                    </Button>,
-                                    <IconButton
-                                        key="close"
-                                        aria-label="Close"
-                                        color="inherit"
-                                        onClick={this.snackBarClose}
-                                    >
-                                        <CloseIcon />
-                                    </IconButton>,
-                                ]}
+                            <SnackBar
+                                open={this.state.snackBar.open}
+                                message={this.state.snackBar.message}
+                                onClose={this.closeSnackBar}
+                                onCancel={this.onRevertAction}
                             />
 
                             <NotesList
-                                props={this.state.notes}
+                                notes={this.state.notes}
                                 handleDelete={this.handleDelete}
                                 handleEdit={this.handleEdit}
-                                openModal={this.openModal}
                             />
+                            {/*
                             {
                                 this.state.isModal
                                     ?
@@ -256,6 +226,7 @@ class App extends Component {
                                     />
                                     : null
                             }
+                            */}
                         </>
                 }
             </div>
