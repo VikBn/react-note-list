@@ -1,11 +1,8 @@
 import React, {Component} from 'react';
-import {connect} from 'react-redux'
-import NotesActionButton from "./NotesActionButton";
 import NotesList from './NotesList';
-// import uuid from 'uuid';
+import uuid from 'uuid';
 import axios from 'axios';
 import Modal from './Modal';
-import CustomButton from './CustomButton';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton'
 import CloseIcon from '@material-ui/icons/Close'
@@ -13,9 +10,10 @@ import Snackbar from '@material-ui/core/Snackbar';
 import Loader from '../loader/Loader'
 
 class App extends Component {
+
     state = {
         notes: [],
-        id: Date.now(),
+        id: uuid(),
         item: '',
         title: '',
         content: '',
@@ -23,10 +21,10 @@ class App extends Component {
         isModal: false,
         snackbarOpen: false,
         snackBarMsg: '',
-        isLoader: true,
+        isLoader: true
     };
 
-    snackBarClose = e => {
+    snackBarClose = () => {
         this.setState({
             snackbarOpen: false
         })
@@ -52,7 +50,7 @@ class App extends Component {
         const newNote = {
             title: this.state.title,
             content: this.state.content,
-            id: Date.now()
+            id: uuid()
         };
 
         axios({
@@ -136,6 +134,7 @@ class App extends Component {
     closeModal = () => {
         this.setState({
             isModal: false,
+            editNote: false,
             title: '',
             content: ''
         })
@@ -158,7 +157,7 @@ class App extends Component {
                     notes: data.notes,
                     isLoader: false
                 })
-            }).catch(error => console.log('get error',error))
+            }).catch(error => console.log('get error', error))
 
         // axios(`notes`, {
         //     mode: 'cors',
@@ -177,34 +176,34 @@ class App extends Component {
     };
 
     componentDidMount() {
-        axios({
-            method: 'post',
-            mode: 'cors',
-            url: 'tokens',
-            headers: {
-                "content-type": "application/json"
-            },
-            data: JSON.stringify({
-                userName: "VikBn"
-            })
-        })
-            .then(res => {
-                console.log(res)
-            })
-            .catch(error => console.log('token error', error));
-
-        // fetch('tokens', {
-        //     method: 'POST',
+        // axios({
+        //     method: 'post',
         //     mode: 'cors',
+        //     url: 'tokens',
         //     headers: {
         //         "content-type": "application/json"
         //     },
-        //     body: JSON.stringify({
+        //     data: JSON.stringify({
         //         userName: "VikBn"
         //     })
         // })
-        //     .then(res => res.json())
-        //     .then(data => console.log(data));
+        //     .then(res => {
+        //         console.log(res)
+        //     })
+        //     .catch(error => console.log('token error', error));
+
+        fetch('tokens', {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                "content-type": "application/json"
+            },
+            body: JSON.stringify({
+                userName: "VikBn"
+            })
+        })
+            .then(res => res.json())
+            .then(data => console.log(data));
 
         this.getNotes();
 
@@ -240,12 +239,12 @@ class App extends Component {
                                     </IconButton>,
                                 ]}
                             />
-                            <CustomButton title='Create Note' openModal={this.openModal}>Create</CustomButton>
 
                             <NotesList
                                 props={this.state.notes}
                                 handleDelete={this.handleDelete}
                                 handleEdit={this.handleEdit}
+                                openModal={this.openModal}
                             />
                             {
                                 this.state.isModal
@@ -270,8 +269,4 @@ class App extends Component {
     }
 }
 
-const mapStateToProps = state => ({
-    notes: state.notes
-});
-
-export default connect(mapStateToProps)(App);
+export default App;

@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import TextArea from 'react-textarea-autosize';
 import styled from 'styled-components';
 import {connect} from 'react-redux';
 import {addNote} from "../actions";
