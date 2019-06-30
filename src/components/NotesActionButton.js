@@ -7,7 +7,6 @@ import {addNote} from "../actions";
 class NotesActionButton extends Component {
 
     state = {
-        notes: [],
         isFormOpen: false,
         title: '',
         content: '',

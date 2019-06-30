@@ -1,6 +1,6 @@
 import {CONSTANTS} from "../actions";
 
-let noteID = 2;
+// let noteID = 2;
 
 const initialState = [];
 
@@ -12,9 +12,8 @@ const notesReducer = (state = initialState, action) => {
             const newNote = {
                 title: action.payload.title,
                 content: action.payload.content,
-                id: noteID
+                id: Date.now()
             };
-            noteID += 1;
 
             return [...state, newNote];
         default:
