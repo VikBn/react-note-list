@@ -16,7 +16,7 @@ class App extends Component {
         hasError: null,
         snackBar: {
             open: false,
-            message: ''
+            message: ""
         }
     };
 
@@ -41,7 +41,7 @@ class App extends Component {
 
     getToken = async () => {
         try {
-            if (serviceApi.getToken()) return;
+            if (serviceApi.getToken()) return
             const res = await serviceApi.call({
                 url: '/tokens',
                 method: 'POST',
@@ -89,46 +89,11 @@ class App extends Component {
             await serviceApi.call({
                 method: 'DELETE',
                 url: `notes/${id}`
+
             });
             await this.getNotes()
         } catch (error) {
             console.log('delete error', error)
-        }
-    };
-
-    handleEdit = id => {
-        const selectedNote = this.state.notes.find(item => item.id === id);
-
-        this.setState({
-            title: selectedNote.title,
-            content: selectedNote.content,
-            editNote: true,
-            isModal: true,
-            id: id
-        })
-    };
-
-    updateNote = async () => {
-        try {
-            const updatedNote = {
-                title: this.state.title,
-                content: this.state.content,
-                id: this.state.id
-            };
-            await serviceApi.call({
-                method: "PATCH",
-                url: `notes/${this.state.id}`,
-                data: updatedNote
-            });
-
-            this.setState({
-                title: '',
-                content: '',
-                editNote: false
-            });
-            await this.getNotes();
-        } catch (error) {
-            console.log('patch error', error)
         }
     };
 
@@ -139,6 +104,17 @@ class App extends Component {
                 ...state.snackBar,
                 open: true,
                 message: 'Note created success'
+            }
+        }))
+    };
+
+    editNote = note => {
+        this.setState(state => ({
+            notes: state.notes.map(item => item.id !== note.id ? item : note),
+            snackBar: {
+                ...state.snackBar,
+                open: true,
+                message: 'Note edit success'
             }
         }))
     };
@@ -166,11 +142,12 @@ class App extends Component {
                                 onClose={this.closeSnackBar}
                                 onCancel={this.onRevertAction}
                             />
+
                             <NotesList
                                 notes={this.state.notes}
                                 handleDelete={this.handleDelete}
-                                handleEdit={this.handleEdit}
                                 addNote={this.addNote}
+                                editNote={this.editNote}
                             />
                         </>
                 }

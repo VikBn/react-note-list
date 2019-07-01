@@ -1,10 +1,10 @@
 import React from 'react';
 import Fab from '@material-ui/core/Fab';
-import AddIcon from '@material-ui/icons/Add';
 import Modal from './Modal';
-import {serviceApi} from '../services/api';
+import {serviceApi} from "../services/api"
+import EditIcon from '@material-ui/icons/Edit';
 
-export default class CreateNote extends React.Component {
+export default class EditNote extends React.Component {
     state = {
         openModal: false
     };
@@ -21,17 +21,18 @@ export default class CreateNote extends React.Component {
         })
     };
 
-    onCreateNote = async ({ title, content }) => {
+    onEditNote = async ({title, content}) => {
         try {
             const res = await serviceApi.call({
-                method: 'POST',
-                url: '/notes',
+                method: "PATCH",
+                url: `notes/${this.props.note.id}`,
                 data: {
-                    title: title,
-                    content: content,
+                    ...this.props.note,
+                    title,
+                    content
                 }
             });
-            this.props.addNote(res);
+            this.props.editNote(res.data);
             this.onCloseModal()
         } catch (error) {
             console.log('submit error', error)
@@ -39,17 +40,19 @@ export default class CreateNote extends React.Component {
     };
 
     render() {
+        const {note} = this.props;
         return (
             <>
-                <Fab onClick={this.onOpenModal} variant="extended" color="primary" aria-label="Add">
-                    <AddIcon/>
-                    Create Note
+                <Fab size="small" onClick={this.onOpenModal} color="secondary" aria-label="Edit">
+                    <EditIcon/>
                 </Fab>
                 {this.state.openModal &&
                 <Modal
-                    // errorTitle={this.state.errorTitle}
                     closeModal={this.onCloseModal}
-                    onSubmit={this.onCreateNote}
+                    onSubmit={this.onEditNote}
+                    editMode
+                    defaultTitle={note.title}
+                    defaultContent={note.content}
                 />
                 }
             </>
