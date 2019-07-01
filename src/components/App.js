@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
 import NotesList from './NotesList';
-import uuid from 'uuid';
-import Modal from './Modal';
 import SnackBar from './SnackBar';
 import Loader from '../loader/Loader'
 import {serviceApi} from "../services/api"
@@ -10,7 +8,6 @@ class App extends Component {
 
     state = {
         notes: [],
-        id: uuid(),
         item: '',
         title: '',
         content: '',
@@ -19,7 +16,7 @@ class App extends Component {
         hasError: null,
         snackBar: {
             open: false,
-            message: ""
+            message: ''
         }
     };
 
@@ -87,56 +84,11 @@ class App extends Component {
         console.log("revert action")
     };
 
-    handleChange = e => {
-        if (e.target.name === 'noteTitle') {
-            this.setState({
-                title: e.target.value,
-                errorTitle: ''
-            })
-        } else {
-            this.setState({
-                content: e.target.value,
-                inputContent: ''
-            })
-        }
-    };
-
-    handleSubmit = async (e) => {
-        try {
-            e.preventDefault();
-
-            const newNote = {
-                title: this.state.title,
-                content: this.state.content,
-                id: uuid()
-            };
-            await serviceApi.call({
-                method: 'POST',
-                url: '/notes',
-                data: newNote
-            });
-            this.setState(state => ({
-                title: '',
-                content: '',
-                isModal: false,
-                snackBar: {
-                    ...state.snackBar,
-                    open: true,
-                    message: 'Note created success'
-                }
-            }));
-            await this.getNotes()
-        } catch (error) {
-            console.log('submit error', error)
-        }
-    };
-
     handleDelete = async (id) => {
         try {
             await serviceApi.call({
                 method: 'DELETE',
                 url: `notes/${id}`
-
             });
             await this.getNotes()
         } catch (error) {
@@ -180,6 +132,17 @@ class App extends Component {
         }
     };
 
+    addNote = (note) => {
+        this.setState(state => ({
+            notes: [...state.notes, note],
+            snackBar: {
+                ...state.snackBar,
+                open: true,
+                message: 'Note created success'
+            }
+        }))
+    };
+
     reloadPage = () => {
         this.updateError(null);
         this.getInitialData()
@@ -203,30 +166,12 @@ class App extends Component {
                                 onClose={this.closeSnackBar}
                                 onCancel={this.onRevertAction}
                             />
-
                             <NotesList
                                 notes={this.state.notes}
                                 handleDelete={this.handleDelete}
                                 handleEdit={this.handleEdit}
+                                addNote={this.addNote}
                             />
-                            {/*
-                            {
-                                this.state.isModal
-                                    ?
-                                    <Modal
-                                        errorTitle={this.state.errorTitle}
-                                        title={this.state.title}
-                                        content={this.state.content}
-                                        handleChange={this.handleChange}
-                                        handleSubmit={this.handleSubmit}
-                                        handleDelete={this.handleDelete}
-                                        updateNote={this.updateNote}
-                                        closeModal={this.closeModal}
-                                        editNote={this.state.editNote}
-                                    />
-                                    : null
-                            }
-                            */}
                         </>
                 }
             </div>
