@@ -1,36 +1,26 @@
 import React from 'react';
 import Fab from '@material-ui/core/Fab';
-import {serviceApi} from "../services/api"
 import DeleteIcon from '@material-ui/icons/Delete';
+import { connect } from 'react-redux';
+import { deleteNote } from '../actions/notesActions';
 
-export default class DeleteNote extends React.Component {
+class DeleteNote extends React.Component {
 
-  onDeleteNote = async (id) => {
-    try {
-      const res = await serviceApi.call({
-        method: 'DELETE',
-        url: `notes/${id}`
-      });
-      await this.props.getNotes();
-      this.props.deleteNote(res.id)
-    } catch (error) {
-      console.log('delete error', error)
+    onDeleteNote = () => {
+        this.props.dispatch(deleteNote(this.props.id))
+    };
+
+    render() {
+        return (
+            <React.Fragment>
+                <Fab size="small"
+                     onClick={this.onDeleteNote}
+                     aria-label="Delete">
+                    <DeleteIcon />
+                </Fab>
+            </React.Fragment>
+        )
     }
-  };
-
-  render() {
-    const {id} = this.props;
-
-    return (
-      <>
-        <Fab
-          size="small"
-          onClick={() => this.onDeleteNote(id)}
-          aria-label="Delete"
-        >
-          <DeleteIcon/>
-        </Fab>
-      </>
-    )
-  }
 }
+
+export default connect()(DeleteNote)
