@@ -2,52 +2,42 @@ import React from 'react';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import Modal from './Modal';
-import {serviceApi} from "../services/api"
+import { createNote } from "../actions/notesActions"
+import { connect } from "react-redux"
 
-export default class CreateNote extends React.Component {
+class CreateNote extends React.Component {
   state = {
     openModal: false
-  }
+  };
 
   onOpenModal = () => {
     this.setState({
       openModal: true
     })
-  }
+  };
 
   onCloseModal = () => {
     this.setState({
       openModal: false
     })
-  }
+  };
 
-  onCreateNote = async ({title, content}) => {
+  onCreateNote = async (note) => {
     try {
-      const res = await serviceApi.call({
-        method: 'POST',
-        url: '/notes',
-        data: {
-          title: title,
-          content: content,
-        }
-      })
-      this.props.addNote(res)
+      await this.props.dispatch(createNote(note));
       this.onCloseModal()
-    } catch (error) {
-      console.log('submit error', error)
-    }
+    } catch (error) { }
   };
 
   render() {
     return (
       <React.Fragment>
         <Fab onClick={this.onOpenModal} variant="extended" color="primary" aria-label="Add">
-          <AddIcon/>
+          <AddIcon />
           Create Note
         </Fab>
         {this.state.openModal &&
         <Modal
-          errorTitle={this.state.errorTitle}
           closeModal={this.onCloseModal}
           onSubmit={this.onCreateNote}
         />
@@ -56,3 +46,5 @@ export default class CreateNote extends React.Component {
     )
   }
 }
+
+export default connect()(CreateNote);

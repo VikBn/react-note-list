@@ -8,15 +8,14 @@ export default class Modal extends React.Component {
     defaultTitle: "",
     defaultContent: "",
     editMode: false
-  }
+  };
 
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       title: props.defaultTitle,
       content: props.defaultContent,
-      id: Date.now()
     }
   }
 
@@ -24,20 +23,19 @@ export default class Modal extends React.Component {
     this.setState({
       [event.target.name]: event.target.value
     })
-  }
+  };
 
   handleSubmit = (event) => {
-    event.preventDefault()
+    event.preventDefault();
     this.props.onSubmit({
       title: this.state.title,
       content: this.state.content,
-      id: this.state.id
     })
-  }
+  };
 
   render() {
-    const {title, content} = this.state
-    const {closeModal, editMode} = this.props
+    const {title, content} = this.state;
+    const {closeModal, editMode} = this.props;
     return (
       <ModalContainer>
         <div id='modal'>

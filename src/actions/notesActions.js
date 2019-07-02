@@ -1,12 +1,100 @@
-import {CONSTANTS} from './index';
 
-export const addNote = (title, content, noteID) => {
-    return {
-        type: CONSTANTS.ADD_NOTE,
-        payload: {
-            title,
-            content,
-            noteID
-        }
+import * as CONSTANTS from "../constants"
+import { serviceApi } from "../services/api"
+
+export const getNotes = () => {
+  return async (dispatch) => {
+    try {
+      dispatch({
+        type: CONSTANTS.GET_NOTES_LOADING
+      });
+      const res = await serviceApi.call({
+        url: '/notes',
+      });
+
+      dispatch({
+        type: CONSTANTS.GET_NOTES_SUCCESS,
+        payload: res.data.notes
+      })
+    } catch (error) {
+      dispatch({
+        type: CONSTANTS.GET_NOTES_ERROR,
+      })
     }
+  }
 };
+
+export const clearError = () => ({
+  type: CONSTANTS.CLEAR_ERROR,
+});
+
+export const createNote = (note) => {
+  return async (dispatch) => {
+    try {
+      dispatch({
+        type: CONSTANTS.CREATE_NOTE_LOADING
+      });
+      const res = await serviceApi.call({
+        method: 'POST',
+        url: '/notes',
+        data: {
+          title: note.title,
+          content: note.content,
+        }
+      });
+      dispatch({
+        type: CONSTANTS.ADD_NOTE,
+        payload: res.data
+      });
+      dispatch({
+        type: CONSTANTS.SNACKBAR_OPEN,
+        payload: 'Note created success'
+      })
+    } catch (error) {
+      dispatch({
+        type: CONSTANTS.SNACKBAR_OPEN,
+        payload: 'Note created error'
+      })
+    }
+  }
+};
+
+export const editNote = (note) => {
+  return async (dispatch) => {
+    try {
+      dispatch({
+        type: CONSTANTS.EDIT_NOTE_LOADING
+      });
+      const res = await serviceApi.call({
+        method: "PATCH",
+        url: `notes/${note.id}`,
+        data: {
+          title: note.title,
+          content: note.content
+        }
+      });
+      dispatch({
+        type: CONSTANTS.EDIT_NOTE_SUCCESS,
+        payload: res.data
+      });
+      dispatch({
+        type: CONSTANTS.SNACKBAR_OPEN,
+        payload: 'Note edit success'
+      })
+    } catch (error) {
+      dispatch({
+        type: CONSTANTS.SNACKBAR_OPEN,
+        payload: 'Note edit error'
+      })
+    }
+  }
+};
+
+export const addNote = note => ({
+  type: CONSTANTS.ADD_NOTE,
+  payload: note
+});
+
+export const closeSnackBar = () => ({
+  type: CONSTANTS.SNACKBAR_CLOSE
+});
