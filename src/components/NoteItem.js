@@ -6,8 +6,9 @@ import Grid from '@material-ui/core/Grid';
 import EditNote from './EditNote';
 import DeleteNote from './DeleteNote';
 
-export default ({ note }) => {
-    const { id, title, content } = note;
+export default ({ note, classes }) => {
+    const { title, content } = note;
+
     return (
 
         <Grid item xs={12} sm={6} md={4} lg={4}>
@@ -21,7 +22,7 @@ export default ({ note }) => {
                     </Typography>
                     <div>
                         <EditNote note={note} />
-                        <DeleteNote id={id} />
+                        <DeleteNote classes={classes} note={note} />
                     </div>
                 </CardContent>
             </Card>

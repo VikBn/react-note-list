@@ -4,95 +4,95 @@ import Button from '@material-ui/core/Button';
 import styled from 'styled-components';
 
 export default class Modal extends React.Component {
-  static defaultProps = {
-    defaultTitle: "",
-    defaultContent: "",
-    editMode: false
-  };
+    static defaultProps = {
+        defaultTitle: '',
+        defaultContent: '',
+        editMode: false
+    };
 
-  constructor(props) {
-    super(props);
+    constructor(props) {
+        super(props);
 
-    this.state = {
-      title: props.defaultTitle,
-      content: props.defaultContent,
+        this.state = {
+            title: props.defaultTitle,
+            content: props.defaultContent,
+        }
     }
-  }
 
-  onChange = event => {
-    this.setState({
-      [event.target.name]: event.target.value
-    })
-  };
+    onChange = event => {
+        this.setState({
+            [event.target.name]: event.target.value
+        })
+    };
 
-  handleSubmit = (event) => {
-    event.preventDefault();
-    this.props.onSubmit({
-      title: this.state.title,
-      content: this.state.content,
-    })
-  };
+    handleSubmit = (event) => {
+        event.preventDefault();
+        this.props.onSubmit({
+            title: this.state.title,
+            content: this.state.content,
+        })
+    };
 
-  render() {
-    const {title, content} = this.state;
-    const {closeModal, editMode} = this.props;
-    return (
-      <ModalContainer>
-        <div id='modal'>
-          <div className='modal_content'>
-            <div>
-              <i className="material-icons v-align-sub">
-                {editMode ? 'create' : 'description'}
-              </i>
-              {editMode ? 'Edit Note' : 'New Note'}
-            </div>
-            <form onSubmit={this.handleSubmit}>
-              <div className='modal__input'>
-                <h5>Title</h5>
-                <TextField
-                  autoFocus
-                  value={title}
-                  onChange={this.onChange}
-                  required
-                  id="standard-required"
-                  placeholder="Enter Title"
-                  margin="normal"
-                  name='title'
-                  fullWidth
-                />
-              </div>
-              <div>
-                <h5>Content</h5>
-                <TextField
-                  placeholder="Enter Content"
-                  required
-                  multiline
-                  rows={2}
-                  rowsMax={4}
-                  value={content}
-                  onChange={this.onChange}
-                  name='content'
-                  fullWidth
-                />
-              </div>
-              <div className='modal__buttons'>
-                <Button type='submit' variant="contained" color="primary">
-                  {editMode ? "Edit" : "Create"}
-                </Button>
-                <Button
-                  onClick={closeModal}
-                  component="span"
-                >
-                  Cancel
-                </Button>
+    render() {
+        const {title, content} = this.state;
+        const {closeModal, editMode} = this.props;
+        return (
+            <ModalContainer>
+                <div id='modal'>
+                    <div className='modal_content'>
+                        <div>
+                            <i className="material-icons v-align-sub">
+                                {editMode ? 'create' : 'description'}
+                            </i>
+                            {editMode ? 'Edit Note' : 'New Note'}
+                        </div>
+                        <form onSubmit={this.handleSubmit}>
+                            <div className='modal__input'>
+                                <h5>Title</h5>
+                                <TextField
+                                    autoFocus
+                                    value={title}
+                                    onChange={this.onChange}
+                                    required
+                                    id="standard-required"
+                                    placeholder="Enter Title"
+                                    margin="normal"
+                                    name='title'
+                                    fullWidth
+                                />
+                            </div>
+                            <div>
+                                <h5>Content</h5>
+                                <TextField
+                                    placeholder="Enter Content"
+                                    required
+                                    multiline
+                                    rows={2}
+                                    rowsMax={4}
+                                    value={content}
+                                    onChange={this.onChange}
+                                    name='content'
+                                    fullWidth
+                                />
+                            </div>
+                            <div className='modal__buttons'>
+                                <Button type='submit' variant="contained" color="primary">
+                                    {editMode ? "Edit" : "Create"}
+                                </Button>
+                                <Button
+                                    onClick={closeModal}
+                                    component="span"
+                                >
+                                    Cancel
+                                </Button>
 
-              </div>
-            </form>
-          </div>
-        </div>
-      </ModalContainer>
-    )
-  }
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </ModalContainer>
+        )
+    }
 }
 
 const ModalContainer = styled.div`
