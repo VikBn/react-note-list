@@ -17,10 +17,10 @@ A basic note application that uses a ReactJS frontend to capture and manage note
 
 <h2>Getting Started</h2>
 <h3>Install</h3
-<ol><li>Clone 'react-note-list' repository from GitHub
+<ol><li><p>Clone 'react-note-list' repository from GitHub</p>
 <div class="highlight highlight-source-shell"><pre>git clone https://github.com/VikBn/react-note-list.git</pre></div>
 </li>
-<li>Install node modules
+  <li><p>Install node modules</p>
 <div class="highlight highlight-source-shell"><pre><span class="pl-c1">cd</span> react-note-list
 npm install / yarn</pre></div>
 </li>
