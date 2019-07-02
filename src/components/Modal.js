@@ -15,7 +15,8 @@ export default class Modal extends React.Component {
 
         this.state = {
             title: props.defaultTitle,
-            content: props.defaultContent
+            content: props.defaultContent,
+            id: Date.now()
         }
     }
 
@@ -30,13 +31,15 @@ export default class Modal extends React.Component {
 
         this.props.onSubmit({
             title: this.state.title,
-            content: this.state.content
+            content: this.state.content,
+            id: this.state.id
         })
     };
 
     render() {
         const { title, content } = this.state;
         const { closeModal, editMode } = this.props;
+        console.log(this.props);
         return (
             <ModalContainer>
                 <div id='modal'>

@@ -4,7 +4,7 @@ import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import CreateNote from "./CreateNote"
 
-export default ({notes, handleDelete, addNote, handleEdit}) => {
+export default ({notes, getNotes, editNote, addNote, deleteNote}) => {
     return (
         <>
             <Container maxWidth="lg">
@@ -15,8 +15,9 @@ export default ({notes, handleDelete, addNote, handleEdit}) => {
                         return <NoteItem
                             key={item.id}
                             note={item}
-                            handleDelete={handleDelete}
-                            handleEdit={handleEdit}
+                            getNotes={getNotes}
+                            editNote={editNote}
+                            deleteNote={deleteNote}
                         />
                     }) : <h3>No notes</h3>}
                 </Grid>

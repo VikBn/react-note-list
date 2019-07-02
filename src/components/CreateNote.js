@@ -21,7 +21,7 @@ export default class CreateNote extends React.Component {
         })
     };
 
-    onCreateNote = async ({ title, content }) => {
+    onCreateNote = async ({ title, content, id }) => {
         try {
             const res = await serviceApi.call({
                 method: 'POST',
@@ -29,6 +29,7 @@ export default class CreateNote extends React.Component {
                 data: {
                     title: title,
                     content: content,
+                    id: id
                 }
             });
             this.props.addNote(res);
@@ -47,7 +48,6 @@ export default class CreateNote extends React.Component {
                 </Fab>
                 {this.state.openModal &&
                 <Modal
-                    // errorTitle={this.state.errorTitle}
                     closeModal={this.onCloseModal}
                     onSubmit={this.onCreateNote}
                 />

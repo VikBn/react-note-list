@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import NotesList from './NotesList';
 import SnackBar from './SnackBar';
 import Loader from '../loader/Loader'
-import {serviceApi} from "../services/api"
+import {serviceApi} from '../services/api'
 
 class App extends Component {
 
@@ -16,7 +16,7 @@ class App extends Component {
         hasError: null,
         snackBar: {
             open: false,
-            message: ""
+            message: ''
         }
     };
 
@@ -41,7 +41,7 @@ class App extends Component {
 
     getToken = async () => {
         try {
-            if (serviceApi.getToken()) return
+            if (serviceApi.getToken()) return;
             const res = await serviceApi.call({
                 url: '/tokens',
                 method: 'POST',
@@ -84,19 +84,6 @@ class App extends Component {
         console.log("revert action")
     };
 
-    handleDelete = async (id) => {
-        try {
-            await serviceApi.call({
-                method: 'DELETE',
-                url: `notes/${id}`
-
-            });
-            await this.getNotes()
-        } catch (error) {
-            console.log('delete error', error)
-        }
-    };
-
     addNote = (note) => {
         this.setState(state => ({
             notes: [...state.notes, note],
@@ -119,6 +106,17 @@ class App extends Component {
         }))
     };
 
+    deleteNote = id => {
+        this.setState(state => ({
+            notes: state.notes.filter(item => item.id !== id),
+            snackBar: {
+                ...state.snackBar,
+                open: true,
+                message: 'Note delete success'
+            }
+        }))
+    };
+
     reloadPage = () => {
         this.updateError(null);
         this.getInitialData()
@@ -126,15 +124,13 @@ class App extends Component {
 
     render() {
         if (this.state.hasError) {
-            return <div>
-                <button type="button" onClick={this.reloadPage}>Reload page</button>
-            </div>
+            return <div><button type="button" onClick={this.reloadPage}>Reload page</button></div>
         }
         return (
             <div className="App">
                 {
                     this.state.isLoader
-                        ? <Loader/>
+                        ? <Loader />
                         : <>
                             <SnackBar
                                 open={this.state.snackBar.open}
@@ -145,9 +141,10 @@ class App extends Component {
 
                             <NotesList
                                 notes={this.state.notes}
-                                handleDelete={this.handleDelete}
+                                getNotes={this.getNotes}
                                 addNote={this.addNote}
                                 editNote={this.editNote}
+                                deleteNote={this.deleteNote}
                             />
                         </>
                 }
