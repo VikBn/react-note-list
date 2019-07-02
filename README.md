@@ -1,4 +1,4 @@
-A basic note application that uses a ReactJS frontend to capture and manage notes
+A basic note application that uses a ReactJS to capture and manage notes
 <h2>Features:</h2>
 <ul>
   <li>Add note</li>
