@@ -18,7 +18,6 @@ const NotesList = ({notes}) => {
     return (
         <>
             <Container maxWidth="lg">
-                <h1>React Notes List</h1>
                 <CreateNote classes={classes}/>
                 <Grid container spacing={3}>
                     {notes.length > 0 ? notes.map(item => {

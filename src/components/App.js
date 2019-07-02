@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import NotesList from './NotesList';
 import SnackBar from './SnackBar';
-import Loader from '../loader/Loader'
-import {serviceApi} from "../services/api"
+import Loader from '../loader/Loader';
+import Header from './Header';
+import {serviceApi} from '../services/api';
 import {connect} from 'react-redux';
 import {getNotes, clearError, closeSnackBar, revertAction} from "../actions/notesActions"
 
@@ -67,6 +68,7 @@ class App extends Component {
                                 onClose={this.onCloseSnackBar}
                                 onCancel={this.onRevertAction}
                             />
+                            <Header/>
                             <NotesList/>
                         </>
                 }
