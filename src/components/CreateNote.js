@@ -2,57 +2,49 @@ import React from 'react';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import Modal from './Modal';
-import {serviceApi} from '../services/api';
+import { createNote } from "../actions/notesActions"
+import { connect } from "react-redux"
 
-export default class CreateNote extends React.Component {
-    state = {
-        openModal: false
-    };
+class CreateNote extends React.Component {
+  state = {
+    openModal: false
+  };
 
-    onOpenModal = () => {
-        this.setState({
-            openModal: true
-        })
-    };
+  onOpenModal = () => {
+    this.setState({
+      openModal: true
+    })
+  };
 
-    onCloseModal = () => {
-        this.setState({
-            openModal: false
-        })
-    };
+  onCloseModal = () => {
+    this.setState({
+      openModal: false
+    })
+  };
 
-    onCreateNote = async ({ title, content, id }) => {
-        try {
-            const res = await serviceApi.call({
-                method: 'POST',
-                url: '/notes',
-                data: {
-                    title: title,
-                    content: content,
-                    id: id
-                }
-            });
-            this.props.addNote(res);
-            this.onCloseModal()
-        } catch (error) {
-            console.log('submit error', error)
+  onCreateNote = async (note) => {
+    try {
+      await this.props.dispatch(createNote(note));
+      this.onCloseModal()
+    } catch (error) { }
+  };
+
+  render() {
+    return (
+      <React.Fragment>
+        <Fab onClick={this.onOpenModal} variant="extended" color="primary" aria-label="Add">
+          <AddIcon />
+          Create Note
+        </Fab>
+        {this.state.openModal &&
+        <Modal
+          closeModal={this.onCloseModal}
+          onSubmit={this.onCreateNote}
+        />
         }
-    };
-
-    render() {
-        return (
-            <>
-                <Fab onClick={this.onOpenModal} variant="extended" color="primary" aria-label="Add">
-                    <AddIcon/>
-                    Create Note
-                </Fab>
-                {this.state.openModal &&
-                <Modal
-                    closeModal={this.onCloseModal}
-                    onSubmit={this.onCreateNote}
-                />
-                }
-            </>
-        )
-    }
+      </React.Fragment>
+    )
+  }
 }
+
+export default connect()(CreateNote);
