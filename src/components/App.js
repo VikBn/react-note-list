@@ -53,11 +53,11 @@ class App extends Component {
     render() {
         if (this.props.isError) {
             return <div>
-                <button type="button" onClick={this.reloadPage}>Reload page</button>
+                <button type='button' className='css-custom-button' onClick={this.reloadPage}>Reload page</button>
             </div>
         }
         return (
-            <div className="App">
+            <div className='App'>
                 {
                     this.props.isLoading
                         ? <Loader/>
